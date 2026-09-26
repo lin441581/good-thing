@@ -21,10 +21,10 @@ static void HomePage_Draw(const WatchDateTime *value)
     ssd1306_WriteString(line, Font_11x18, White);
 
     snprintf(line, sizeof(line), "%04u-%02u-%02u", value->year, value->month, value->day);
-    ssd1306_SetCursor(17, 34);
+    ssd1306_SetCursor(29, 34);
     ssd1306_WriteString(line, Font_7x10, White);
 
-    ssd1306_SetCursor(50, 50);
+    ssd1306_SetCursor(53, 50);
     ssd1306_WriteString(weekdays[weekday], Font_7x10, White);
     ssd1306_UpdateScreen();
 }
