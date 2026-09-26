@@ -1,0 +1,45 @@
+#ifndef OLED_CHINESE_H
+#define OLED_CHINESE_H
+
+#include "ssd1306.h"
+
+typedef enum
+{
+    OLED_TEXT_MAIN_MENU,
+    OLED_TEXT_STEP,
+    OLED_TEXT_STOPWATCH,
+    OLED_TEXT_ACCELERATION,
+    OLED_TEXT_LEVEL,
+    OLED_TEXT_FLASHLIGHT,
+    OLED_TEXT_GAME,
+    OLED_TEXT_BATTERY,
+    OLED_TEXT_RUNNING,
+    OLED_TEXT_PAUSED,
+    OLED_TEXT_ON,
+    OLED_TEXT_OFF,
+    OLED_TEXT_NORMAL,
+    OLED_TEXT_ERROR,
+    OLED_TEXT_SCORE,
+    OLED_TEXT_TIME,
+    OLED_TEXT_GAME_OVER,
+    OLED_TEXT_HORIZONTAL,
+    OLED_TEXT_VERTICAL,
+    OLED_TEXT_UPRIGHT,
+    OLED_TEXT_BATTERY_LEVEL,
+    OLED_TEXT_VOLT,
+    OLED_TEXT_SECOND,
+    OLED_TEXT_COUNT
+} OledChineseTextId;
+
+#define OLED_CHINESE_FONT_WIDTH  16U
+#define OLED_CHINESE_FONT_HEIGHT 16U
+#define OLED_CHINESE_GLYPH_BYTES \
+    ((OLED_CHINESE_FONT_WIDTH * OLED_CHINESE_FONT_HEIGHT) / 8U)
+
+void OLED_Chinese_DrawText(uint8_t x, uint8_t y,
+                           OledChineseTextId text,
+                           SSD1306_COLOR color);
+uint8_t OLED_Chinese_TextWidth(OledChineseTextId text);
+
+#endif
+
