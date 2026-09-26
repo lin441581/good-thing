@@ -36,7 +36,7 @@ static const OledChineseTextId menu_name[MENU_COUNT] = {
 };
 static const uint8_t *const menu_icons[MENU_COUNT] = {
     icon_game, icon_stopwatch, icon_led, icon_mpu6050, icon_game,
-    icon_battery, icon_level, icon_game, icon_step, icon_battery, icon_battery
+    icon_battery, icon_level, icon_game, icon_step, icon_battery, icon_settings
 };
 
 static void Menu_Draw(void)

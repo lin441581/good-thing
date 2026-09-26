@@ -15,7 +15,9 @@ static void HomePage_Draw(const WatchDateTime *value)
 
     ssd1306_Fill(Black);
     snprintf(line, sizeof(line), "%02u:%02u:%02u", value->hour, value->minute, value->second);
-    ssd1306_SetCursor(8, 4);
+    /* Font_16x26 is 16 pixels wide per character; start at zero so the
+       complete eight-character time remains inside the 128-pixel display. */
+    ssd1306_SetCursor(0, 4);
     ssd1306_WriteString(line, Font_16x26, White);
 
     snprintf(line, sizeof(line), "%04u-%02u-%02u", value->year, value->month, value->day);
