@@ -93,6 +93,28 @@ uint8_t OLED_Chinese_TextWidth(OledChineseTextId text)
     return (uint8_t)(chinese_texts[text].count * OLED_CHINESE_FONT_WIDTH);
 }
 
+uint8_t OLED_Chinese_TextWidthSmall(OledChineseTextId text)
+{
+    return text < OLED_TEXT_COUNT ? (uint8_t)(chinese_texts[text].count * 8U) : 0U;
+}
+
+void OLED_Chinese_DrawTextSmall(uint8_t x, uint8_t y,
+                                OledChineseTextId text, SSD1306_COLOR color)
+{
+    if (text >= OLED_TEXT_COUNT) return;
+    for (uint8_t c = 0; c < chinese_texts[text].count; c++)
+    {
+        const uint8_t *glyph = glyph_bytes[chinese_texts[text].glyphs[c]];
+        for (uint8_t row = 0; row < 8U; row++)
+            for (uint8_t col = 0; col < 8U; col++)
+            {
+                uint8_t sx = (uint8_t)(col * 2U), sy = (uint8_t)(row * 2U);
+                if ((glyph[sy * 2U + sx / 8U] & (uint8_t)(0x80U >> (sx % 8U))) != 0U)
+                    ssd1306_DrawPixel((uint8_t)(x + c * 8U + col), (uint8_t)(y + row), color);
+            }
+    }
+}
+
 void OLED_Chinese_DrawText(uint8_t x, uint8_t y,
                            OledChineseTextId text,
                            SSD1306_COLOR color)

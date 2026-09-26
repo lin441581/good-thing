@@ -58,6 +58,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/led_page.c
     Core/Src/stopwatch_page.c
     Core/Src/game_page.c
+    Core/Src/game_menu.c
     Core/Src/battery_page.c
     Core/Src/watch_rtc.c
     Core/Src/home_page.c

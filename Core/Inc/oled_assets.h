@@ -18,6 +18,7 @@ extern const uint8_t icon_led[ICON_BYTES];
 extern const uint8_t icon_game[ICON_BYTES];
 extern const uint8_t icon_battery[ICON_BYTES];
 extern const uint8_t icon_settings[ICON_BYTES];
+extern const uint8_t icon_emoji_smile[ICON_BYTES];
 extern const uint8_t dino_frame[DINO_BYTES];
 
 #endif

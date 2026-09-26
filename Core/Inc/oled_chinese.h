@@ -40,6 +40,10 @@ void OLED_Chinese_DrawText(uint8_t x, uint8_t y,
                            OledChineseTextId text,
                            SSD1306_COLOR color);
 uint8_t OLED_Chinese_TextWidth(OledChineseTextId text);
+uint8_t OLED_Chinese_TextWidthSmall(OledChineseTextId text);
+void OLED_Chinese_DrawTextSmall(uint8_t x, uint8_t y,
+                                OledChineseTextId text,
+                                SSD1306_COLOR color);
 
 #endif
 

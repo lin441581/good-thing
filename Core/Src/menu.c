@@ -10,32 +10,33 @@
 #include "battery_page.h"
 #include "settings_page.h"
 #include "emoji_page.h"
+#include "game_menu.h"
 #include "oled_assets.h"
 #include "oled_chinese.h"
 #include <stdio.h>
 
-#define MENU_COUNT 10
+#define MENU_COUNT 9
 #define MENU_VISIBLE_ITEMS 3
 
 typedef enum { MENU_ITEM_STOPWATCH, MENU_ITEM_FLASHLIGHT,
-               MENU_ITEM_MPU6050, MENU_ITEM_GAME, MENU_ITEM_TV,
+               MENU_ITEM_MPU6050, MENU_ITEM_GAME,
                MENU_ITEM_LEVEL, MENU_ITEM_STEP, MENU_ITEM_BATTERY,
                MENU_ITEM_SETTINGS, MENU_ITEM_EMOJI } MenuItem;
 
 static uint8_t menu_index;
 static const uint8_t menu_items[MENU_COUNT] = {
     MENU_ITEM_STOPWATCH, MENU_ITEM_FLASHLIGHT, MENU_ITEM_MPU6050,
-    MENU_ITEM_GAME, MENU_ITEM_TV, MENU_ITEM_LEVEL, MENU_ITEM_EMOJI,
+    MENU_ITEM_GAME, MENU_ITEM_LEVEL, MENU_ITEM_EMOJI,
     MENU_ITEM_STEP, MENU_ITEM_BATTERY, MENU_ITEM_SETTINGS
 };
 static const OledChineseTextId menu_name[MENU_COUNT] = {
     OLED_TEXT_STOPWATCH, OLED_TEXT_FLASHLIGHT, OLED_TEXT_ACCELERATION,
-    OLED_TEXT_GAME, OLED_TEXT_GAME, OLED_TEXT_LEVEL, OLED_TEXT_GAME,
+    OLED_TEXT_GAME, OLED_TEXT_LEVEL, OLED_TEXT_GAME,
     OLED_TEXT_STEP, OLED_TEXT_BATTERY, OLED_TEXT_BATTERY
 };
 static const uint8_t *const menu_icons[MENU_COUNT] = {
-    icon_stopwatch, icon_led, icon_mpu6050, icon_game, icon_battery,
-    icon_level, icon_game, icon_step, icon_battery, icon_settings
+    icon_stopwatch, icon_led, icon_mpu6050, icon_game,
+    icon_level, icon_emoji_smile, icon_step, icon_battery, icon_settings
 };
 
 static void Menu_Draw(void)
@@ -50,19 +51,19 @@ static void Menu_Draw(void)
         ssd1306_DrawBitmap((uint16_t)x, 16, menu_icons[index], ICON_WIDTH, ICON_HEIGHT, White);
         if (offset == 0)
             ssd1306_DrawRect((uint16_t)(x - 2), 13, 36, 38, White);
-        if (menu_items[index] == MENU_ITEM_TV)
-        {
-            ssd1306_SetCursor((uint8_t)(x + 8), 51);
-            ssd1306_WriteString("TV", Font_7x10, White);
-        }
-        else if (menu_items[index] == MENU_ITEM_EMOJI)
+        if (menu_items[index] == MENU_ITEM_EMOJI)
         {
             ssd1306_SetCursor((uint8_t)(x + 1), 51);
             ssd1306_WriteString("EMOJI", Font_7x10, White);
         }
+        else if (menu_items[index] == MENU_ITEM_SETTINGS)
+        {
+            ssd1306_SetCursor((uint8_t)(x + 4), 52);
+            ssd1306_WriteString("SET", Font_7x10, White);
+        }
         else
-            OLED_Chinese_DrawText((uint8_t)(x + (32U - OLED_Chinese_TextWidth(menu_name[index])) / 2U),
-                                  51, menu_name[index], White);
+            OLED_Chinese_DrawTextSmall((uint8_t)(x + (32U - OLED_Chinese_TextWidthSmall(menu_name[index])) / 2U),
+                                       52, menu_name[index], White);
     }
     ssd1306_UpdateScreen();
 }
@@ -75,12 +76,11 @@ static void Menu_Enter(uint8_t index)
         case MENU_ITEM_MPU6050: MpuPage_Run(); break;
         case MENU_ITEM_LEVEL: LevelPage_Run(); break;
         case MENU_ITEM_FLASHLIGHT: LedPage_Run(); break;
-        case MENU_ITEM_GAME: GamePage_Run(); break;
+        case MENU_ITEM_GAME: GameMenu_Run(); break;
         case MENU_ITEM_STEP: StepPage_Run(); break;
         case MENU_ITEM_BATTERY: BatteryPage_Run(); break;
         case MENU_ITEM_SETTINGS: SettingsPage_Run(); break;
         case MENU_ITEM_EMOJI: EmojiPage_Run(); break;
-        case MENU_ITEM_TV: break;
         default: break;
     }
 }

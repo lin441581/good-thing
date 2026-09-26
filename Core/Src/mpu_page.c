@@ -37,8 +37,6 @@ static void MpuPage_Draw(void)
     snprintf(text, sizeof(text), "%6d", accel_z);
     ssd1306_WriteString(text, Font_7x10, White);
 
-    ssd1306_SetCursor(80, 0);
-    ssd1306_WriteString(accel_valid ? "OK" : "ERR", Font_7x10, White);
     ssd1306_UpdateScreen();
 }
 
