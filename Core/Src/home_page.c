@@ -15,10 +15,10 @@ static void HomePage_Draw(const WatchDateTime *value)
 
     ssd1306_Fill(Black);
     snprintf(line, sizeof(line), "%02u:%02u:%02u", value->hour, value->minute, value->second);
-    /* Font_16x26 is 16 pixels wide per character; start at zero so the
-       complete eight-character time remains inside the 128-pixel display. */
-    ssd1306_SetCursor(0, 4);
-    ssd1306_WriteString(line, Font_16x26, White);
+    /* Font_16x26 clips the final digit on this driver; use compact font so
+       all eight characters, including seconds, stay visible. */
+    ssd1306_SetCursor(20, 8);
+    ssd1306_WriteString(line, Font_11x18, White);
 
     snprintf(line, sizeof(line), "%04u-%02u-%02u", value->year, value->month, value->day);
     ssd1306_SetCursor(17, 34);

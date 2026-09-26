@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 static const char *const field_names[] = {
-    "YEAR", "MONTH", "DAY", "WEEKDAY", "HOUR", "MIN", "SEC"
+    "YEAR", "MONTH", "DAY", "HOUR", "MIN", "SEC"
 };
 static const char *const weekday_names[] = {
     "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"
@@ -19,9 +19,8 @@ static uint16_t SettingsPage_FieldValue(const WatchDateTime *value, uint8_t fiel
         case 0U: return value->year;
         case 1U: return value->month;
         case 2U: return value->day;
-        case 3U: return WatchRtc_Weekday(value);
-        case 4U: return value->hour;
-        case 5U: return value->minute;
+        case 3U: return value->hour;
+        case 4U: return value->minute;
         default: return value->second;
     }
 }
@@ -40,14 +39,14 @@ static void SettingsPage_Increment(WatchDateTime *value, uint8_t field)
         if (value->day > WatchRtc_DaysInMonth(value->year, value->month))
             value->day = WatchRtc_DaysInMonth(value->year, value->month);
     }
-    else if (field == 2U || field == 3U)
+    else if (field == 2U)
     {
         uint8_t max_day = WatchRtc_DaysInMonth(value->year, value->month);
         value->day = value->day >= max_day ? 1U : (uint8_t)(value->day + 1U);
     }
-    else if (field == 4U)
+    else if (field == 3U)
         value->hour = value->hour >= 23U ? 0U : (uint8_t)(value->hour + 1U);
-    else if (field == 5U)
+    else if (field == 4U)
         value->minute = value->minute >= 59U ? 0U : (uint8_t)(value->minute + 1U);
     else
         value->second = value->second >= 59U ? 0U : (uint8_t)(value->second + 1U);
@@ -72,13 +71,8 @@ static void SettingsPage_Draw(const WatchDateTime *value, uint8_t field)
     snprintf(text, sizeof(text), "%s", field_names[field]);
     ssd1306_WriteString(text, Font_7x10, White);
     ssd1306_SetCursor(0, 53);
-    if (field == 3U)
-        ssd1306_WriteString((char *)weekday_names[selected_value], Font_7x10, White);
-    else
-    {
-        snprintf(text, sizeof(text), "%u", selected_value);
-        ssd1306_WriteString(text, Font_7x10, White);
-    }
+    snprintf(text, sizeof(text), "%u", selected_value);
+    ssd1306_WriteString(text, Font_7x10, White);
     ssd1306_UpdateScreen();
 }
 
@@ -102,11 +96,16 @@ void SettingsPage_Run(void)
         if (event == KEY_EVENT_NEXT || event == KEY_EVENT_NEXT_LONG)
         {
             SettingsPage_Increment(&value, field);
+            if (event == KEY_EVENT_NEXT_LONG)
+            {
+                for (uint8_t repeat = 1U; repeat < 10U; repeat++)
+                    SettingsPage_Increment(&value, field);
+            }
             SettingsPage_Draw(&value, field);
         }
         else if (event == KEY_EVENT_OK)
         {
-            if (++field >= 7U)
+            if (++field >= 6U)
             {
                 (void)WatchRtc_Write(&value);
                 ssd1306_Fill(Black);
