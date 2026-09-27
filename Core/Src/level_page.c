@@ -12,7 +12,7 @@ static void LevelPage_Draw(float roll, float pitch, uint8_t valid)
 {
     int16_t dot_x = 64;
     int16_t dot_y = 42;
-    const char *status = valid ? "正常" : "错误";
+    const char *status = valid ? "FLAT" : "ERR";
 
     if (valid)
     {
@@ -22,6 +22,8 @@ static void LevelPage_Draw(float roll, float pitch, uint8_t valid)
         if (dot_x > 81) dot_x = 81;
         if (dot_y < 25) dot_y = 25;
         if (dot_y > 59) dot_y = 59;
+        if (fabsf(roll) > 5.0f || fabsf(pitch) > 5.0f)
+            status = "TILT";
     }
 
     ssd1306_Fill(Black);
