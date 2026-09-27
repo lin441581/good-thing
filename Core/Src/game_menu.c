@@ -1,8 +1,10 @@
 #include "game_menu.h"
 #include "game_page.h"
+#include "game2_page.h"
 #include "key.h"
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
+#include "oled_chinese.h"
 
 static const uint8_t game_title[5][32] = {
  {0x0C,0x30,0x18,0x0C,0x61,0x84,0x03,0x80,0x06,0xC0,0x0C,0x70,0x18,0x1C,0x7F,0xFE,0x08,0x10,0x08,0x10,0x08,0x10,0x0F,0xF0,0x08,0x10,0x08,0x00,0,0,0,0},
@@ -21,6 +23,24 @@ static void GameMenu_DrawTitle(void)
                     ssd1306_DrawPixel((uint8_t)(24U + c * 16U + col), (uint8_t)(4U + row), White);
 }
 
+static void GameMenu_DrawSelectionBox(uint8_t x, uint8_t y,
+                                      uint8_t width, uint8_t height)
+{
+    ssd1306_DrawLine(x, y, (uint8_t)(x + width), y, White);
+    ssd1306_DrawLine(x, (uint8_t)(y + height),
+                     (uint8_t)(x + width), (uint8_t)(y + height), White);
+    ssd1306_DrawLine(x, y, x, (uint8_t)(y + height), White);
+    ssd1306_DrawLine((uint8_t)(x + width), y,
+                     (uint8_t)(x + width), (uint8_t)(y + height), White);
+}
+
+static void GameMenu_DrawGame2(uint8_t selected)
+{
+    OLED_Chinese_DrawText(24, 40, OLED_TEXT_COIN, White);
+    if (selected)
+        GameMenu_DrawSelectionBox(20, 37, 88, 23);
+}
+
 void GameMenu_Run(void)
 {
     uint8_t selected = 0U;
@@ -28,16 +48,19 @@ void GameMenu_Run(void)
     {
         ssd1306_Fill(Black);
         GameMenu_DrawTitle();
-        ssd1306_SetCursor(36, 45);
-        ssd1306_WriteString(selected ? "ON" : "PLAY", Font_7x10, White);
+        if (!selected)
+            GameMenu_DrawSelectionBox(20, 1, 88, 22);
+        GameMenu_DrawGame2(selected);
         ssd1306_UpdateScreen();
 
         KeyEvent_t event = Key_GetEvent();
         if (event == KEY_EVENT_OK || event == KEY_EVENT_OK_LONG)
         {
-            if (event == KEY_EVENT_OK)
+            if (event == KEY_EVENT_OK && selected == 0U)
                 GamePage_Run();
-            else
+            else if (event == KEY_EVENT_OK && selected == 1U)
+                Game2Page_Run();
+            else if (event == KEY_EVENT_OK_LONG)
             {
                 ssd1306_Fill(Black);
                 ssd1306_UpdateScreen();

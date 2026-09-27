@@ -13,6 +13,12 @@
 #define DINO_H           18
 #define OBSTACLE_W       16
 #define OBSTACLE_H       18
+#define DINO_HIT_X       2
+#define DINO_HIT_W       12
+#define DINO_HIT_H       14
+#define OBSTACLE_HIT_X   3
+#define OBSTACLE_HIT_W   10
+#define OBSTACLE_HIT_H   14
 #define GAME_TICK_MS     20U
 #define OBSTACLE_STEP_MS 20U
 #define SPEED_INTERVAL_MS 10000U
@@ -81,15 +87,19 @@ static int16_t GamePage_DinoY(void)
 static uint8_t GamePage_Collision(void)
 {
     int16_t dino_y = GamePage_DinoY();
-    int16_t dino_right = DINO_X + DINO_W;
-    int16_t obstacle_right = obstacle_x + OBSTACLE_W;
+    int16_t dino_left = DINO_X + DINO_HIT_X;
+    int16_t dino_right = dino_left + DINO_HIT_W;
+    int16_t dino_bottom = dino_y + DINO_H - (DINO_H - DINO_HIT_H);
+    int16_t obstacle_left = obstacle_x + OBSTACLE_HIT_X;
+    int16_t obstacle_right = obstacle_left + OBSTACLE_HIT_W;
+    int16_t obstacle_top = GROUND_Y - OBSTACLE_HIT_H;
 
     if (obstacle_x < 0 || obstacle_x >= 128)
         return 0;
 
-    return dino_right > obstacle_x &&
-           DINO_X < obstacle_right &&
-           dino_y + DINO_H > GROUND_Y - OBSTACLE_H;
+    return dino_right > obstacle_left &&
+           dino_left < obstacle_right &&
+           dino_bottom > obstacle_top;
 }
 
 static void GamePage_Draw(void)

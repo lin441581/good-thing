@@ -28,6 +28,7 @@ typedef enum
     OLED_TEXT_BATTERY_LEVEL,
     OLED_TEXT_VOLT,
     OLED_TEXT_SECOND,
+    OLED_TEXT_COIN,
     OLED_TEXT_COUNT
 } OledChineseTextId;
 
