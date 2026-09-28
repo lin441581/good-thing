@@ -1,4 +1,5 @@
 #include "game_page.h"
+#include "watch_service.h"
 #include "key.h"
 #include "ssd1306.h"
 #include "oled_assets.h"
@@ -147,6 +148,7 @@ void GamePage_Run(void)
 
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
 

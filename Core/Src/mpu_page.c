@@ -1,4 +1,5 @@
 #include "mpu_page.h"
+#include "watch_service.h"
 #include "key.h"
 #include "mpu6050.h"
 #include "ssd1306.h"
@@ -53,6 +54,7 @@ void MpuPage_Run(void)
 
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
 

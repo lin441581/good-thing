@@ -39,6 +39,7 @@
 #include "rtc.h"
 #include "watch_rtc.h"
 #include "home_page.h"
+#include "watch_service.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -131,6 +132,7 @@ HAL_Delay(100);
 mpu_status = MPU6050_ReadId(&mpu_id);
   ssd1306_Init();
 StepCounter_Init();
+WatchService_Init();
 Key_Init();
   WatchRtc_Init();
 Menu_Init();

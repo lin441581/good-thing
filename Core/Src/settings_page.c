@@ -1,4 +1,5 @@
 #include "settings_page.h"
+#include "watch_service.h"
 #include "watch_rtc.h"
 #include "key.h"
 #include "ssd1306.h"
@@ -86,6 +87,7 @@ void SettingsPage_Run(void)
     SettingsPage_Draw(&value, field);
     while (1)
     {
+        WatchService_Process();
         KeyEvent_t event = Key_GetEvent();
         if (event == KEY_EVENT_OK_LONG)
         {

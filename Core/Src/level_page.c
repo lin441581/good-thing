@@ -1,4 +1,5 @@
 #include "level_page.h"
+#include "watch_service.h"
 #include "key.h"
 #include "mpu6050.h"
 #include "ssd1306.h"
@@ -49,6 +50,7 @@ void LevelPage_Run(void)
     LevelPage_Draw(roll, pitch, valid);
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
         if (event == KEY_EVENT_OK || event == KEY_EVENT_OK_LONG)

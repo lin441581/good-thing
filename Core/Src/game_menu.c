@@ -1,4 +1,5 @@
 #include "game_menu.h"
+#include "watch_service.h"
 #include "game_page.h"
 #include "game2_page.h"
 #include "key.h"
@@ -46,6 +47,7 @@ void GameMenu_Run(void)
     uint8_t selected = 0U;
     while (1)
     {
+        WatchService_Process();
         ssd1306_Fill(Black);
         GameMenu_DrawTitle();
         if (!selected)

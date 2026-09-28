@@ -68,6 +68,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/oled_chinese.c
     Core/Src/emoji_page.c
     Core/Src/key.c
+    Core/Src/bluetooth.c
+    Core/Src/watch_led.c
+    Core/Src/watch_service.c
     Core/Src/menu.c
 )
 

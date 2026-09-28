@@ -1,17 +1,12 @@
 #include "led_page.h"
+#include "watch_service.h"
+#include "watch_led.h"
 #include "key.h"
 #include "ssd1306.h"
 #include "oled_chinese.h"
 #include "ssd1306_fonts.h"
 
-static uint8_t led_on;
 static uint8_t led_cursor;
-
-static void LedPage_Apply(void)
-{
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15,
-                      led_on ? GPIO_PIN_SET : GPIO_PIN_RESET);
-}
 
 static void LedPage_Draw(void)
 {
@@ -30,12 +25,21 @@ static void LedPage_Draw(void)
 
 void LedPage_Run(void)
 {
-    led_on = 0U;
-    led_cursor = 0U;
-    LedPage_Apply();
+    uint8_t displayed_state = WatchLed_IsOn();
+
+    led_cursor = displayed_state;
     LedPage_Draw();
     while (1)
     {
+        WatchService_Process();
+        uint8_t actual_state = WatchLed_IsOn();
+        if (actual_state != displayed_state)
+        {
+            displayed_state = actual_state;
+            led_cursor = actual_state;
+            LedPage_Draw();
+        }
+
         KeyEvent_t event = Key_GetEvent();
         if (event == KEY_EVENT_OK_LONG)
         {
@@ -50,8 +54,8 @@ void LedPage_Run(void)
         }
         else if (event == KEY_EVENT_OK)
         {
-            led_on = led_cursor;
-            LedPage_Apply();
+            WatchLed_Set(led_cursor);
+            displayed_state = led_cursor;
             LedPage_Draw();
         }
         HAL_Delay(10);

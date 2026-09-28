@@ -1,4 +1,5 @@
 #include "game2_page.h"
+#include "watch_service.h"
 #include "key.h"
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
@@ -70,6 +71,7 @@ void Game2Page_Run(void)
 
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
 

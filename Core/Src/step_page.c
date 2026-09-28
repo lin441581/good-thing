@@ -1,6 +1,6 @@
 #include "step_page.h"
+#include "watch_service.h"
 #include "key.h"
-#include "mpu6050.h"
 #include "ssd1306.h"
 #include "step_counter.h"
 #include "oled_chinese.h"
@@ -22,16 +22,13 @@ static void StepPage_Draw(void)
 
 void StepPage_Run(void)
 {
-    uint32_t last_sample = HAL_GetTick();
-    uint32_t last_draw = last_sample;
-    int16_t ax;
-    int16_t ay;
-    int16_t az;
+    uint32_t last_draw = HAL_GetTick();
 
     StepPage_Draw();
 
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
 
@@ -46,15 +43,6 @@ void StepPage_Run(void)
         {
             StepCounter_Reset();
             StepPage_Draw();
-        }
-
-        if ((now - last_sample) >= 20U)
-        {
-            last_sample = now;
-            if (MPU6050_ReadAccel(&ax, &ay, &az) == HAL_OK)
-            {
-                StepCounter_Process(ax, ay, az);
-            }
         }
 
         if ((now - last_draw) >= 100U)

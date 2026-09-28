@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "watch_service.h"
 #include "key.h"
 #include "ssd1306.h"
 #include "step_page.h"
@@ -74,6 +75,7 @@ void Menu_Run(void)
     Menu_Draw();
     while (1)
     {
+        WatchService_Process();
         KeyEvent_t event = Key_GetEvent();
         if (event == KEY_EVENT_NEXT)
         {

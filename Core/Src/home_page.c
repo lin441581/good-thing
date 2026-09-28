@@ -1,4 +1,5 @@
 #include "home_page.h"
+#include "watch_service.h"
 #include "menu.h"
 #include "watch_rtc.h"
 #include "key.h"
@@ -36,6 +37,7 @@ void HomePage_Run(void)
 
     while (1)
     {
+        WatchService_Process();
         uint32_t now = HAL_GetTick();
         KeyEvent_t event = Key_GetEvent();
 
