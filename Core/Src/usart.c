@@ -21,6 +21,27 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+#define USART1_RX_BUFFER_SIZE 128U
+#define USART1_RX_BUFFER_MASK (USART1_RX_BUFFER_SIZE - 1U)
+
+static uint8_t uart1_rx_byte;
+static volatile uint8_t uart1_rx_buffer[USART1_RX_BUFFER_SIZE];
+static volatile uint8_t uart1_rx_head;
+static volatile uint8_t uart1_rx_tail;
+static uint8_t uart1_echo_buffer[USART1_RX_BUFFER_SIZE];
+static volatile uint8_t uart1_echo_head;
+static volatile uint8_t uart1_echo_tail;
+static volatile uint8_t uart1_echo_busy;
+
+static void USART1_EchoStartNext(void)
+{
+  if ((uart1_echo_busy == 0U) && (uart1_echo_head != uart1_echo_tail))
+  {
+    uart1_echo_busy = 1U;
+    if (HAL_UART_Transmit_IT(&huart1, &uart1_echo_buffer[uart1_echo_tail], 1U) != HAL_OK)
+      uart1_echo_busy = 0U;
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -83,6 +104,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
+
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
@@ -113,5 +137,70 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+HAL_StatusTypeDef USART1_ReceiveStart(void)
+{
+  uart1_rx_head = 0U;
+  uart1_rx_tail = 0U;
+  uart1_echo_head = 0U;
+  uart1_echo_tail = 0U;
+  uart1_echo_busy = 0U;
+  return HAL_UART_Receive_IT(&huart1, &uart1_rx_byte, 1U);
+}
+
+uint8_t USART1_Available(void)
+{
+  return (uint8_t)((uart1_rx_head - uart1_rx_tail) & USART1_RX_BUFFER_MASK);
+}
+
+uint8_t USART1_ReadByte(uint8_t *byte)
+{
+  if ((byte == NULL) || (uart1_rx_head == uart1_rx_tail))
+    return 0U;
+
+  *byte = uart1_rx_buffer[uart1_rx_tail];
+  uart1_rx_tail = (uint8_t)((uart1_rx_tail + 1U) & USART1_RX_BUFFER_MASK);
+  return 1U;
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *uart)
+{
+  if (uart->Instance == USART1)
+  {
+    uint8_t next = (uint8_t)((uart1_rx_head + 1U) & USART1_RX_BUFFER_MASK);
+
+    if (next != uart1_rx_tail)
+    {
+      uart1_rx_buffer[uart1_rx_head] = uart1_rx_byte;
+      uart1_rx_head = next;
+    }
+
+    next = (uint8_t)((uart1_echo_head + 1U) & USART1_RX_BUFFER_MASK);
+    if (next != uart1_echo_tail)
+    {
+      uart1_echo_buffer[uart1_echo_head] = uart1_rx_byte;
+      uart1_echo_head = next;
+      USART1_EchoStartNext();
+    }
+
+    (void)HAL_UART_Receive_IT(&huart1, &uart1_rx_byte, 1U);
+  }
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *uart)
+{
+  if (uart->Instance == USART1)
+  {
+    uart1_echo_tail = (uint8_t)((uart1_echo_tail + 1U) & USART1_RX_BUFFER_MASK);
+    uart1_echo_busy = 0U;
+    USART1_EchoStartNext();
+  }
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *uart)
+{
+  if (uart->Instance == USART1)
+    (void)HAL_UART_Receive_IT(&huart1, &uart1_rx_byte, 1U);
+}
 
 /* USER CODE END 1 */

@@ -41,6 +41,9 @@ extern UART_HandleTypeDef huart1;
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+HAL_StatusTypeDef USART1_ReceiveStart(void);
+uint8_t USART1_Available(void);
+uint8_t USART1_ReadByte(uint8_t *byte);
 
 /* USER CODE END Prototypes */
 
